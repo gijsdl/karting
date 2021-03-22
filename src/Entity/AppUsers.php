@@ -6,10 +6,12 @@ use App\Repository\AppUsersRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=AppUsersRepository::class)
+ * @UniqueEntity(fields={"username"}, message="There is already an account with this username")
  */
 class AppUsers implements UserInterface
 {
