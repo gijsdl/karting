@@ -19,6 +19,55 @@ class ActiviteitenRepository extends ServiceEntityRepository
         parent::__construct($registry, Activiteiten::class);
     }
 
+    public function getBeschikbareActiviteiten($userid)
+    {
+//        $em=$this->getEntityManager();
+//        $query=$em->createQuery("SELECT a FROM AppBundle:Activiteit a WHERE :userid NOT MEMBER OF a.users ORDER BY a.datum");
+//
+//        $query->setParameter('userid',$userid);
+
+//        return $query->getResult();
+
+        $qb = $this->createQueryBuilder('a');
+        $qb->select('a')
+            ->where(':userid NOT MEMBER OF a.users')
+            ->orderBy('a.datum')
+            ->setParameter('userid', $userid);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function getIngeschrevenActiviteiten($userid)
+    {
+
+//        $em=$this->getEntityManager();
+//        $query=$em->createQuery("SELECT a FROM AppBundle:Activiteit a WHERE :userid MEMBER OF a.users ORDER BY a.datum");
+//
+//        $query->setParameter('userid',$userid);
+//
+//        return $query->getResult();
+
+        $qb = $this->createQueryBuilder('a');
+        $qb->select('a')
+            ->where(':userid MEMBER OF a.users')
+            ->orderBy('a.datum')
+            ->setParameter('userid', $userid);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function getTotaal($activiteiten)
+    {
+
+        $totaal=0;
+        foreach($activiteiten as $a)
+        {
+            $totaal+=$a->getSoort()->getPrijs();
+        }
+        return $totaal;
+
+    }
+
     // /**
     //  * @return Activiteiten[] Returns an array of Activiteiten objects
     //  */

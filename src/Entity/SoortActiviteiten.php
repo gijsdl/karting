@@ -6,6 +6,7 @@ use App\Repository\SoortActiviteitenRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=SoortActiviteitenRepository::class)
@@ -21,21 +22,25 @@ class SoortActiviteiten
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="vul naam in")
      */
     private $naam;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank(message="vul minimale leeftijd in")
      */
     private $minLeeftijd;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank(message="vul tijdsduur in")
      */
     private $tijdsduur;
 
     /**
      * @ORM\Column(type="decimal", precision=6, scale=2)
+     * @Assert\NotBlank(message="vul prijs in")
      */
     private $prijs;
 

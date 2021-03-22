@@ -60,7 +60,7 @@ class BezoekerController extends AbstractController
 
                 $this->addFlash(
                     'notice',
-                    $user->getUserName().' is geregistreerd!'
+                    $user->getNaam().' is geregistreerd!'
                 );
 
                 return $this->redirectToRoute('homepage');

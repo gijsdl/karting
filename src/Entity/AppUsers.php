@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=AppUsersRepository::class)
@@ -24,11 +25,13 @@ class AppUsers implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\NotBlank(message="vul gebruikersnaam in")
      */
     private $username;
 
     /**
      * @ORM\Column(type="json")
+     *
      */
     private $roles = [];
 
@@ -40,11 +43,15 @@ class AppUsers implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=60)
+     * @Assert\Email(
+     *    message = "The email '{{ value }}' is geen geldig email adres")
+     * @Assert\NotBlank(message="vul emailadres in")
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=10)
+     * @Assert\NotBlank(message="vul voorletters in")
      */
     private $voorletters;
 
@@ -55,26 +62,31 @@ class AppUsers implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=25)
+     * @Assert\NotBlank(message="vul achternaam in")
      */
     private $achternaam;
 
     /**
      * @ORM\Column(type="string", length=25)
+     * @Assert\NotBlank(message="vul adres in")
      */
     private $adres;
 
     /**
      * @ORM\Column(type="string", length=7)
+     * @Assert\NotBlank(message="vul postcode in")
      */
     private $postcode;
 
     /**
      * @ORM\Column(type="string", length=20)
+     * @Assert\NotBlank(message="vul woonplaats in")
      */
     private $woonplaats;
 
     /**
      * @ORM\Column(type="string", length=15)
+     * @Assert\NotBlank(message="vul telfoonnummer in")
      */
     private $telefoon;
 
@@ -100,7 +112,7 @@ class AppUsers implements UserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->username;
+        return (string)$this->username;
     }
 
     public function setUsername(string $username): self
@@ -116,8 +128,6 @@ class AppUsers implements UserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
@@ -134,7 +144,7 @@ class AppUsers implements UserInterface
      */
     public function getPassword(): string
     {
-        return (string) $this->password;
+        return (string)$this->password;
     }
 
     public function setPassword(string $password): self
@@ -210,6 +220,11 @@ class AppUsers implements UserInterface
         $this->achternaam = $achternaam;
 
         return $this;
+    }
+
+    function getNaam()
+    {
+        return $this->voorletters . " " . $this->tussenvoegsel . " " . $this->achternaam;
     }
 
     public function getAdres(): ?string
