@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Activiteiten;
 use App\Entity\AppUsers;
+use App\Form\ActiviteitSoortType;
 use App\Form\ActiviteitType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -148,8 +149,8 @@ class MedewerkerController extends AbstractController
      */
     public function deleteAction($id)
     {
-        $em=$this->getDoctrine()->getManager();
-        $activiteit= $this->getDoctrine()
+        $em = $this->getDoctrine()->getManager();
+        $activiteit = $this->getDoctrine()
             ->getRepository(Activiteiten::class)->find($id);
         $em->remove($activiteit);
         $em->flush();
@@ -160,5 +161,38 @@ class MedewerkerController extends AbstractController
         );
         return $this->redirectToRoute('beheer');
 
+    }
+
+    /**
+     * @Route("/admin/soort/add", name="add_soort")
+     * @param Request $request
+     * @return Response
+     */
+    public function addSoort(Request $request)
+    {
+        $form = $this->createForm(ActiviteitSoortType::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $soortActiviteit = $form->getData();
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($soortActiviteit);
+            $em->flush();
+
+            $this->addFlash(
+                'notice',
+                'activiteit toegevoegd!'
+            );
+            return $this->redirectToRoute('beheer');
+        }
+        $activiteiten = $this->getDoctrine()
+            ->getRepository(Activiteiten::class)
+            ->findAll();
+        return $this->render('medewerker/add_soort.html.twig', [
+            'form' => $form->createView(),
+            'naam' => 'toevoegen',
+            'aantal' => count($activiteiten)
+            ]);
     }
 }
