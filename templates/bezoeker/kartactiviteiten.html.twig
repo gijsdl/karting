@@ -11,7 +11,9 @@
             <h3>Er zijn {{ soortactiviteiten|length }} soorten activiteiten </h3>
             <ul class="list-group">
                 {% for activiteit in soortactiviteiten %}
-                <li class="list-group-item text-primary">{{ activiteit.naam }}</li>
+                <li class="list-group-item text-primary">
+                    <a href="{{ path('acitiviteit_detail', {'activiteitNaam':activiteit.naam}) }}">
+                        {{ activiteit.naam }}</a></li>
                 {% endfor %}
             </ul>
             <p>

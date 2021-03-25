@@ -1,0 +1,23 @@
+{% extends 'bezoeker.html.twig' %}
+
+{% block menu %}
+    <li><a href="{{ path('homepage') }}">home</a></li>
+    <li class="active"><a href="{{ path('kartactiviteiten') }}">aanbod</a></li>
+    <li><a href="{{ path('registreren') }}">registreren</a></li>
+    <li><a href="#">contact</a></li>
+{% endblock %}
+
+{% block content %}
+
+    <h1>{{ activiteit.naam }}</h1>
+
+    <ul class="list-group">
+        <li class="list-group-item">minimale leeftijd: {{ activiteit.minLeeftijd }}</li>
+        <li class="list-group-item">tijdsduur: {{ activiteit.tijdsduur }}</li>
+        <li class="list-group-item">prijs: {{ activiteit.prijs }}</li>
+        <li class="list-group-item">beschrijving: <br>
+            {{ activiteit.beschrijving }}</li>
+    </ul>
+
+
+{% endblock %}

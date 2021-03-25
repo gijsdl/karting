@@ -40,13 +40,6 @@ class ActiviteitenRepository extends ServiceEntityRepository
     public function getIngeschrevenActiviteiten($userid)
     {
 
-//        $em=$this->getEntityManager();
-//        $query=$em->createQuery("SELECT a FROM AppBundle:Activiteit a WHERE :userid MEMBER OF a.users ORDER BY a.datum");
-//
-//        $query->setParameter('userid',$userid);
-//
-//        return $query->getResult();
-
         $qb = $this->createQueryBuilder('a');
         $qb->select('a')
             ->where(':userid MEMBER OF a.users')

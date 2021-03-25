@@ -38,15 +38,6 @@ class AppUsersRepository extends ServiceEntityRepository implements PasswordUpgr
 
     public function getDeelnemers($activiteitid)
     {
-//        $em=$this->getEntityManager();
-//
-//
-//        $query=$em->createQuery("SELECT d FROM AppBundle:User d WHERE :activiteitid MEMBER OF d.activiteiten");
-//
-//        $query->setParameter('activiteitid',$activiteitid);
-//
-//        return $query->getResult();
-
         $qb = $this->createQueryBuilder('d');
         $qb->select('d')
             ->where(':activiteitid MEMBER OF d.activiteiten')
