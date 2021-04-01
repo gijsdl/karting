@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.0
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Gegenereerd op: 25 mrt 2021 om 15:08
--- Serverversie: 10.4.18-MariaDB
--- PHP-versie: 7.4.16
+-- Gegenereerd op: 01 apr 2021 om 12:22
+-- Serverversie: 10.4.17-MariaDB
+-- PHP-versie: 7.4.15
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -34,25 +34,26 @@ CREATE TABLE `activiteiten` (
   `id` int(11) NOT NULL,
   `soort_id` int(11) NOT NULL,
   `datum` date NOT NULL,
-  `tijd` time NOT NULL
+  `tijd` time NOT NULL,
+  `max_deelnemers` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Gegevens worden geëxporteerd voor tabel `activiteiten`
 --
 
-INSERT INTO `activiteiten` (`id`, `soort_id`, `datum`, `tijd`) VALUES
-(1, 1, '2021-04-26', '09:00:00'),
-(2, 4, '2021-04-26', '10:00:00'),
-(3, 2, '2021-04-26', '11:00:00'),
-(4, 1, '2021-05-03', '09:00:00'),
-(5, 4, '2021-05-03', '10:00:00'),
-(6, 2, '2021-05-03', '00:00:00'),
-(7, 1, '2021-06-06', '09:00:00'),
-(8, 1, '2021-06-06', '10:00:00'),
-(9, 4, '2021-06-06', '11:00:00'),
-(10, 4, '2021-06-13', '11:30:00'),
-(11, 1, '2021-06-13', '12:00:00');
+INSERT INTO `activiteiten` (`id`, `soort_id`, `datum`, `tijd`, `max_deelnemers`) VALUES
+(1, 1, '2021-04-26', '09:00:00', 5),
+(2, 4, '2021-04-26', '10:00:00', 5),
+(3, 2, '2021-04-26', '11:00:00', 5),
+(4, 1, '2021-05-03', '09:00:00', 5),
+(5, 4, '2021-05-03', '10:00:00', 5),
+(6, 2, '2021-05-03', '00:00:00', 5),
+(7, 1, '2021-06-06', '09:00:00', 5),
+(8, 1, '2021-06-06', '10:00:00', 5),
+(9, 4, '2021-06-06', '11:00:00', 5),
+(10, 4, '2021-06-13', '11:30:00', 5),
+(11, 1, '2021-06-13', '12:00:00', 5);
 
 -- --------------------------------------------------------
 
@@ -96,6 +97,13 @@ CREATE TABLE `app_users_activiteiten` (
   `activiteiten_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Gegevens worden geëxporteerd voor tabel `app_users_activiteiten`
+--
+
+INSERT INTO `app_users_activiteiten` (`app_users_id`, `activiteiten_id`) VALUES
+(2, 11);
+
 -- --------------------------------------------------------
 
 --
@@ -114,7 +122,8 @@ CREATE TABLE `migration_versions` (
 
 INSERT INTO `migration_versions` (`version`, `executed_at`) VALUES
 ('20210318105324', '2021-03-25 12:05:05'),
-('20210325135543', '2021-03-25 13:56:04');
+('20210325135543', '2021-03-25 13:56:04'),
+('20210401101019', '2021-04-01 10:10:29');
 
 -- --------------------------------------------------------
 
@@ -140,7 +149,9 @@ INSERT INTO `soort_activiteiten` (`id`, `naam`, `min_leeftijd`, `tijdsduur`, `pr
 (1, 'Vrije training', 12, 15, '15.00', 'Dit is een vrije training'),
 (2, 'Grand Prix', 12, 60, '50.00', 'Dit is de grand Prix'),
 (3, 'Endurance race', 16, 90, '65.00', 'Dit is de endurance race'),
-(4, 'Kinder race', 8, 10, '18.00', 'Dit is de kinder race');
+(4, 'Kinder race', 8, 10, '18.00', 'Dit is de kinder race'),
+(6, 'Senioren race', 45, 30, '15.50', 'Zo veel mogelijk rondjes rijden'),
+(7, 'Duo race', 16, 45, '20.00', 'Deelnemers worden aan elkaar gekoppeld. De langzaamste deelnemer bepaald de positie op de scorelijst');
 
 --
 -- Indexen voor geëxporteerde tabellen
@@ -200,7 +211,7 @@ ALTER TABLE `app_users`
 -- AUTO_INCREMENT voor een tabel `soort_activiteiten`
 --
 ALTER TABLE `soort_activiteiten`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Beperkingen voor geëxporteerde tabellen

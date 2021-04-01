@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Activiteiten;
 use App\Entity\AppUsers;
+use App\Entity\SoortActiviteiten;
 use App\Form\ActiviteitSoortType;
 use App\Form\ActiviteitType;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,9 +31,11 @@ class MedewerkerController extends AbstractController
         $activiteiten = $this->getDoctrine()
             ->getRepository(Activiteiten::class)
             ->findAll();
+        $soortActiviteiten = $this->getDoctrine()->getRepository(SoortActiviteiten::class)->findAll();
 
         return $this->render('medewerker/activiteiten.html.twig', [
-            'activiteiten' => $activiteiten
+            'activiteiten' => $activiteiten,
+            'soortAantal' =>count($soortActiviteiten)
         ]);
     }
 
@@ -50,12 +54,14 @@ class MedewerkerController extends AbstractController
         $deelnemers = $this->getDoctrine()
             ->getRepository(AppUsers::class)
             ->getDeelnemers($id);
+        $soortActiviteiten = $this->getDoctrine()->getRepository(SoortActiviteiten::class)->findAll();
 
 
         return $this->render('medewerker/details.html.twig', [
             'activiteit' => $activiteit,
             'deelnemers' => $deelnemers,
-            'aantal' => count($activiteiten)
+            'aantal' => count($activiteiten),
+            'soortAantal' =>count($soortActiviteiten)
         ]);
     }
 
@@ -67,9 +73,11 @@ class MedewerkerController extends AbstractController
         $activiteiten = $this->getDoctrine()
             ->getRepository(Activiteiten::class)
             ->findAll();
+        $soortActiviteiten = $this->getDoctrine()->getRepository(SoortActiviteiten::class)->findAll();
 
         return $this->render('medewerker/beheer.html.twig', [
-            'activiteiten' => $activiteiten
+            'activiteiten' => $activiteiten,
+            'soortAantal' =>count($soortActiviteiten)
         ]);
     }
 
@@ -99,10 +107,12 @@ class MedewerkerController extends AbstractController
         $activiteiten = $this->getDoctrine()
             ->getRepository(Activiteiten::class)
             ->findAll();
+        $soortActiviteiten = $this->getDoctrine()->getRepository(SoortActiviteiten::class)->findAll();
         return $this->render('medewerker/add.html.twig', [
             'form' => $form->createView(),
             'naam' => 'toevoegen',
-            'aantal' => count($activiteiten)]);
+            'aantal' => count($activiteiten),
+            'soortAantal' =>count($soortActiviteiten)]);
     }
 
     /**
@@ -137,11 +147,14 @@ class MedewerkerController extends AbstractController
         $activiteiten = $this->getDoctrine()
             ->getRepository(Activiteiten::class)
             ->findAll();
+        $soortActiviteiten = $this->getDoctrine()->getRepository(SoortActiviteiten::class)->findAll();
 
         return $this->render('medewerker/add.html.twig', [
             'form' => $form->createView(),
             'naam' => 'aanpassen',
-            'aantal' => count($activiteiten)]);
+            'aantal' => count($activiteiten),
+            'soortAantal' =>count($soortActiviteiten)]);
+
     }
 
     /**
@@ -164,11 +177,29 @@ class MedewerkerController extends AbstractController
     }
 
     /**
+     * @Route("/admin/soort", name="soort")
+     * @param EntityManagerInterface $em
+     * @return Response
+     */
+    public function showSoort(EntityManagerInterface $em)
+    {
+        $soortActiviteiten = $em->getRepository(SoortActiviteiten::class)->findAll();
+        $activiteiten = $this->getDoctrine()
+            ->getRepository(Activiteiten::class)
+            ->findAll();
+        return $this->render('medewerker/soort.html.twig', [
+            'soorten' => $soortActiviteiten,
+            'aantal' => count($activiteiten)
+        ]);
+    }
+
+    /**
      * @Route("/admin/soort/add", name="add_soort")
+     * @param EntityManagerInterface $em
      * @param Request $request
      * @return Response
      */
-    public function addSoort(Request $request)
+    public function addSoort(EntityManagerInterface $em, Request $request)
     {
         $form = $this->createForm(ActiviteitSoortType::class);
 
@@ -176,23 +207,73 @@ class MedewerkerController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $soortActiviteit = $form->getData();
-            $em = $this->getDoctrine()->getManager();
             $em->persist($soortActiviteit);
             $em->flush();
 
             $this->addFlash(
                 'notice',
-                'activiteit toegevoegd!'
+                'soort activiteit toegevoegd!'
             );
-            return $this->redirectToRoute('beheer');
+            return $this->redirectToRoute('soort');
         }
-        $activiteiten = $this->getDoctrine()
-            ->getRepository(Activiteiten::class)
-            ->findAll();
+        $activiteiten =$em->getRepository(Activiteiten::class)->findAll();
+        $soortActiviteiten = $em->getRepository(SoortActiviteiten::class)->findAll();
         return $this->render('medewerker/add_soort.html.twig', [
             'form' => $form->createView(),
             'naam' => 'toevoegen',
-            'aantal' => count($activiteiten)
-            ]);
+            'aantal' => count($activiteiten),
+            'soortAantal' =>count($soortActiviteiten)
+        ]);
+    }
+
+    /**
+     * @Route("/admin/soort/update/{id}", name="update_soort")
+     * @param EntityManagerInterface $em
+     * @param Request $request
+     * @return Response
+     */
+    public function updateSoort(EntityManagerInterface $em, Request $request, $id)
+    {
+        $soortActiviteit = $em->getRepository(SoortActiviteiten::class)->find($id);
+        $form = $this->createForm(ActiviteitSoortType::class, $soortActiviteit);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $soortActiviteit = $form->getData();
+            $em->persist($soortActiviteit);
+            $em->flush();
+
+            $this->addFlash(
+                'notice',
+                'soort activiteit aangepast!'
+            );
+            return $this->redirectToRoute('soort');
+        }
+        $activiteiten =$em->getRepository(Activiteiten::class)->findAll();
+        $soortActiviteiten = $em->getRepository(SoortActiviteiten::class)->findAll();
+        return $this->render('medewerker/add_soort.html.twig', [
+            'form' => $form->createView(),
+            'naam' => 'Aanpassen',
+            'aantal' => count($activiteiten),
+            'soortAantal' =>count($soortActiviteiten)
+        ]);
+    }
+
+    /**
+     * @Route("/admin/soort/delete/{id}", name="delete_soort")
+     */
+    public function deleteSoort($id, EntityManagerInterface $em)
+    {
+        $activiteit = $em->getRepository(SoortActiviteiten::class)->find($id);
+        $em->remove($activiteit);
+        $em->flush();
+
+        $this->addFlash(
+            'notice',
+            'soort activiteit verwijderd!'
+        );
+        return $this->redirectToRoute('soort');
+
     }
 }

@@ -16,15 +16,15 @@ class ActiviteitType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('datum', DateType::class, ['attr' => ['class' => 'js-datepicker', 'placeholder'=>'dd-mm-yyyy'],
-                'widget'=>'single_text', 'html5' => false, 'format'=> 'dd-MM-yyyy'
+            ->add('datum', DateType::class, ['attr' => ['class' => 'js-datepicker', 'placeholder' => 'dd-mm-yyyy'],
+                'widget' => 'single_text', 'html5' => false, 'format' => 'dd-MM-yyyy'
             ])
-            ->add('tijd', TimeType::class, ['attr' => ['class' => 'js-timepicker', 'placeholder'=>'hh:mm'],
-                'widget'=>'single_text','html5' => false,])
+            ->add('tijd', TimeType::class, ['attr' => ['class' => 'js-timepicker', 'placeholder' => 'hh:mm'],
+                'widget' => 'single_text', 'html5' => false,])
             ->add('soort', EntityType::class,
-               ['class' => SoortActiviteiten::class,
-                    'choice_label' => 'naam',]);
-        ;
+                ['class' => SoortActiviteiten::class,
+                    'choice_label' => 'naam',])
+            ->add('maxDeelnemers', null, ['label' => 'maximaal aantal deelnemers']);
     }
 
     public function configureOptions(OptionsResolver $resolver)
