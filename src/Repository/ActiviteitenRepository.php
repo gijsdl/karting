@@ -21,30 +21,30 @@ class ActiviteitenRepository extends ServiceEntityRepository
 
     public function getBeschikbareActiviteiten($userid)
     {
-//        $em=$this->getEntityManager();
-//        $query=$em->createQuery("SELECT a FROM AppBundle:Activiteit a WHERE :userid NOT MEMBER OF a.users ORDER BY a.datum");
-//
-//        $query->setParameter('userid',$userid);
-
-//        return $query->getResult();
-
+        date_default_timezone_set("Europe/Amsterdam");
+        $dateNow = date('Y-m-d');
         $qb = $this->createQueryBuilder('a');
         $qb->select('a')
             ->where(':userid NOT MEMBER OF a.users')
+            ->andWhere('a.datum > :date')
             ->orderBy('a.datum')
-            ->setParameter('userid', $userid);
+            ->setParameter('userid', $userid)
+            ->setParameter('date', $dateNow);
 
         return $qb->getQuery()->getResult();
     }
 
     public function getIngeschrevenActiviteiten($userid)
     {
-
+        date_default_timezone_set("Europe/Amsterdam");
+        $dateNow = date('Y-m-d');
         $qb = $this->createQueryBuilder('a');
         $qb->select('a')
             ->where(':userid MEMBER OF a.users')
+            ->andWhere('a.datum > :date')
             ->orderBy('a.datum')
-            ->setParameter('userid', $userid);
+            ->setParameter('userid', $userid)
+            ->setParameter('date', $dateNow);
 
         return $qb->getQuery()->getResult();
     }
@@ -52,10 +52,9 @@ class ActiviteitenRepository extends ServiceEntityRepository
     public function getTotaal($activiteiten)
     {
 
-        $totaal=0;
-        foreach($activiteiten as $a)
-        {
-            $totaal+=$a->getSoort()->getPrijs();
+        $totaal = 0;
+        foreach ($activiteiten as $a) {
+            $totaal += $a->getSoort()->getPrijs();
         }
         return $totaal;
 
