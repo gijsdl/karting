@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 
 /**
@@ -35,7 +36,7 @@ class MedewerkerController extends AbstractController
 
         return $this->render('medewerker/activiteiten.html.twig', [
             'activiteiten' => $activiteiten,
-            'soortAantal' =>count($soortActiviteiten)
+            'soortAantal' => count($soortActiviteiten)
         ]);
     }
 
@@ -61,7 +62,7 @@ class MedewerkerController extends AbstractController
             'activiteit' => $activiteit,
             'deelnemers' => $deelnemers,
             'aantal' => count($activiteiten),
-            'soortAantal' =>count($soortActiviteiten)
+            'soortAantal' => count($soortActiviteiten)
         ]);
     }
 
@@ -77,7 +78,7 @@ class MedewerkerController extends AbstractController
 
         return $this->render('medewerker/beheer.html.twig', [
             'activiteiten' => $activiteiten,
-            'soortAantal' =>count($soortActiviteiten)
+            'soortAantal' => count($soortActiviteiten)
         ]);
     }
 
@@ -112,7 +113,7 @@ class MedewerkerController extends AbstractController
             'form' => $form->createView(),
             'naam' => 'toevoegen',
             'aantal' => count($activiteiten),
-            'soortAantal' =>count($soortActiviteiten)]);
+            'soortAantal' => count($soortActiviteiten)]);
     }
 
     /**
@@ -153,7 +154,7 @@ class MedewerkerController extends AbstractController
             'form' => $form->createView(),
             'naam' => 'aanpassen',
             'aantal' => count($activiteiten),
-            'soortAantal' =>count($soortActiviteiten)]);
+            'soortAantal' => count($soortActiviteiten)]);
 
     }
 
@@ -216,13 +217,13 @@ class MedewerkerController extends AbstractController
             );
             return $this->redirectToRoute('soort');
         }
-        $activiteiten =$em->getRepository(Activiteiten::class)->findAll();
+        $activiteiten = $em->getRepository(Activiteiten::class)->findAll();
         $soortActiviteiten = $em->getRepository(SoortActiviteiten::class)->findAll();
         return $this->render('medewerker/add_soort.html.twig', [
             'form' => $form->createView(),
             'naam' => 'toevoegen',
             'aantal' => count($activiteiten),
-            'soortAantal' =>count($soortActiviteiten)
+            'soortAantal' => count($soortActiviteiten)
         ]);
     }
 
@@ -250,13 +251,13 @@ class MedewerkerController extends AbstractController
             );
             return $this->redirectToRoute('soort');
         }
-        $activiteiten =$em->getRepository(Activiteiten::class)->findAll();
+        $activiteiten = $em->getRepository(Activiteiten::class)->findAll();
         $soortActiviteiten = $em->getRepository(SoortActiviteiten::class)->findAll();
         return $this->render('medewerker/add_soort.html.twig', [
             'form' => $form->createView(),
             'naam' => 'Aanpassen',
             'aantal' => count($activiteiten),
-            'soortAantal' =>count($soortActiviteiten)
+            'soortAantal' => count($soortActiviteiten)
         ]);
     }
 
@@ -276,4 +277,57 @@ class MedewerkerController extends AbstractController
         return $this->redirectToRoute('soort');
 
     }
+
+    /**
+     * @Route("/admin/deelnemers", name="show_deelnemers")
+     * @param EntityManagerInterface $em
+     * @return Response
+     */
+    public function showDeelnemers(EntityManagerInterface $em)
+    {
+        $deelnemers = $em->getRepository(AppUsers::class)->findByRoles("ROLE_USER");
+
+        $activiteiten = $em->getRepository(Activiteiten::class)->findAll();
+        $soortActiviteiten = $em->getRepository(SoortActiviteiten::class)->findAll();
+        return $this->render('medewerker/deelnemers.html.twig', [
+            'deelnemers' => $deelnemers,
+            'aantal' => count($activiteiten),
+            'soortAantal' => count($soortActiviteiten)]);
+    }
+
+    /**
+     * @Route("/admin/resetPass/{id}", name="user_reset_pass")
+     * @param EntityManagerInterface $em
+     * @param $id
+     */
+    public function resetDeelnemerWachtwoord(EntityManagerInterface $em, UserPasswordEncoderInterface $passwordEncoder, $id){
+        $user = $em->getRepository(AppUsers::class)->find($id);
+        $user->setPassword($passwordEncoder->encodePassword($user, 'qwerty'));
+        $em->persist($user);
+        $em->flush();
+
+        $this->addFlash(
+            'notice',
+            'wachtwoord van ' . $user->getNaam() . ' is gereset.'
+        );
+        return $this->redirectToRoute('show_deelnemers');
+    }
+
+    /**
+     * @Route("/admin/deelnemer/delete/{id}", name="delete_deelnemer")
+     */
+    public function deleteDeelnemer($id, EntityManagerInterface $em)
+    {
+        $deelnemer = $em->getRepository(AppUsers::class)->find($id);
+        $em->remove($deelnemer);
+        $em->flush();
+
+        $this->addFlash(
+            'notice',
+            'deelnemer verwijderd!'
+        );
+        return $this->redirectToRoute('show_deelnemers');
+
+    }
+
 }

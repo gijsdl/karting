@@ -46,6 +46,15 @@ class AppUsersRepository extends ServiceEntityRepository implements PasswordUpgr
         return $qb->getQuery()->getResult();
     }
 
+    public function findByRoles($role){
+        $qb = $this->createQueryBuilder('u');
+        $qb->select('u')
+            ->where('u.roles LIKE :role')
+            ->setParameter('role', '%"' . $role . '"%');
+
+        return $qb->getQuery()->getResult();
+    }
+
     // /**
     //  * @return AppUsers[] Returns an array of AppUsers objects
     //  */
