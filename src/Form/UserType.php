@@ -18,6 +18,11 @@ class UserType extends AbstractType
             ->add('username',TextType::class
                 , array(
                     'label' => 'Gebruikersnaam'))
+            ->add('currentPassword', PasswordType::class, [
+                'mapped' => false,
+                'help' => 'vul huidig wachtwoord in',
+                'label' => 'huidig wachtwoord'
+            ])
             ->add('password', RepeatedType::class, array(
                 'type' => PasswordType::class,
                 'first_options'  => ['label' => 'Wachtwoord'],
@@ -31,7 +36,6 @@ class UserType extends AbstractType
             ->add('woonplaats')
             ->add('email')
             ->add('telefoon');
-        ;
     }
 
     public function configureOptions(OptionsResolver $resolver)

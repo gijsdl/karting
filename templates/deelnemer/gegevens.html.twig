@@ -1,0 +1,48 @@
+{% extends 'deelnemer.html.twig' %}
+{% set user = app.user %}
+{% block menu %}
+    <li><a href="{{ path('activiteiten') }}">home</a></li>
+    <li class="active"><a href="{{ path('show_user_gegevens') }}">gegevens</a></li>
+{% endblock %}
+
+{% block content %}
+    <h3>uw gegevens</h3>
+
+    <button type="button" class="btn btn-secondary" onclick="location.href='{{ path('edit_user', {'password':"false"}) }}'">Gegevens wijzigen</button>
+    <button type="button" class="btn btn-secondary" onclick="location.href='{{ path('edit_user', {'password':"true"}) }}'">Wachtwoord wijzigen</button>
+
+    <br>
+    <br>
+    <table class="table table-striped" style="table-layout: fixed">
+        <tr>
+            <th>naam</th>
+            <td>{{ user.naam }}</td>
+        </tr>
+        <tr>
+            <th>gebruikersnaam</th>
+            <td>{{ user.username }}</td>
+        </tr>
+        <tr>
+            <th>adres</th>
+            <td> {{ user.adres }}</td>
+        </tr>
+        <tr>
+            <th>postcode</th>
+            <td> {{ user.postcode }}
+        </tr>
+        <tr>
+            <th>woonplaats</th></td>
+            <td>{{ user.woonplaats }}</td>
+        </tr>
+        <tr>
+            <th>email</th>
+            <td>{{ user.email }}</td>
+        </tr>
+        <tr>
+            <th>telefoon</th>
+            <td>{{ user.telefoon }}</td>
+        </tr>
+    </table>
+{% endblock %}
+
+

@@ -62,6 +62,7 @@ class BezoekerController extends AbstractController
     {
 
         $form = $this->createForm(UserType::class);
+        $form->remove('huidigWachtwoord');
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

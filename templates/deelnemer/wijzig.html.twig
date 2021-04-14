@@ -1,0 +1,18 @@
+{% extends 'deelnemer.html.twig' %}
+
+{% block menu %}
+    <li><a href="{{ path('activiteiten') }}">home</a></li>
+    <li><a href="{{ path('show_user_gegevens') }}">gegevens</a></li>
+{% endblock %}
+
+{% block content %}
+    <h3> {{ title }}</h3>
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button type="submit" class="btn btn-primary">Opslaan</button>
+    {{ form_end(form) }}
+{% endblock %}
+
+
+
